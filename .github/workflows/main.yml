@@ -1,0 +1,68 @@
+name: NFT-Bot
+
+on:
+  push:
+    branches: [main]
+
+    # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build_on_mac:
+    name: Gh_Actions Mac
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+        with:
+          node-version: "15.x"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: |
+          npm run dist-m
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          CI: false
+
+      - name: Upload builds to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: 2.0.0
+          files: dist/*.*
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  build_on_win:
+    name: Gh_Actions Win
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+        with:
+          node-version: "15.x"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: |
+          npm run dist-w
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          CI: false
+
+      - name: Upload builds to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: 2.0.0
+          files: dist/*.*
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
